@@ -1,0 +1,151 @@
+# COALGUARD AI: System Engineering & Migration Report
+
+**Project**: Underground Coal Mine Safety Command Center  
+**Date**: September 4, 2026  
+**Status**: 🟢 **OPERATIONAL & LIVE**  
+**Database**: Supabase (PostgreSQL) + In-Memory Resilient Cache  
+**Real-Time Engine**: High-Frequency WebSocket Stream (1.2s Interval)  
+
+---
+
+## Executive Summary
+
+The backend system of **CoalGuard AI** has been successfully transitioned from **MongoDB (Mongoose)** to **Supabase (PostgreSQL)** using `@supabase/supabase-js`. The architecture supports full mission-critical data persistence, real-time edge AI computer vision inference for PPE compliance, multi-zone environmental telemetry jitter simulation, statutory DGMS incident logging/sign-offs, and bi-directional frontend streaming.
+
+Both the **Backend Service** (`http://localhost:8080`) and **Frontend Command Center** (`http://localhost:5173`) are running, synchronized, and actively exchanging real-time packets.
+
+---
+
+## 1. Architecture & Technology Stack
+
+```mermaid
+graph TD
+    subgraph Frontend ["Frontend Command Center (Vite / React)"]
+        UI[Dashboard 3D Digital Twin]
+        WS_Client[Telemetry Stream Service]
+        Store[Zustand Stores]
+    end
+
+    subgraph Backend ["Backend Command Server (Node.js / Express / TypeScript)"]
+        WS_Server[WebSocket Server: /api/v1/mine-safety/stream]
+        Tel_Engine[Telemetry Engine: 1.2s Jitter Loop]
+        AI_Vision[AI Vision Service: PPE Compliance]
+        REST_API[REST API Router: /api/v1/*]
+    end
+
+    subgraph Database ["Data & Persistence Layer"]
+        Supabase[(Supabase PostgreSQL)]
+        Mem_Cache[(In-Memory Resilient Cache)]
+    end
+
+    WS_Server -->|Push Packets: Telemetry, AI Scans, Alerts| WS_Client
+    WS_Client --> Store --> UI
+    Tel_Engine --> WS_Server
+    AI_Vision --> WS_Server
+
+    REST_API --> Supabase
+    Tel_Engine -.->|Async Persist| Supabase
+    AI_Vision --> Supabase
+    Supabase -.->|Offline Fallback| Mem_Cache
+```
+
+---
+
+## 2. Database Migration Breakdown
+
+### Migration Summary
+
+| Component | Legacy (MongoDB) | Current (Supabase PostgreSQL) |
+|---|---|---|
+| **Driver / SDK** | `mongoose` v8.9.5 | `@supabase/supabase-js` v2.115.0 |
+| **Data Types** | BSON Documents & Schemas | Relational Tables, UUIDs, JSONB, ENUMs |
+| **Security** | MongoDB Atlas IP Whitelist | PostgreSQL Row Level Security (RLS) Policies |
+| **Performance** | Compound Mongoose Indexes | PostgreSQL B-Tree Indexes on `timestamp`, `zone`, `worker_id` |
+| **Reliability** | Database connection crash risk | Dual-layer with graceful in-memory fallback buffer |
+
+---
+
+## 3. Database Schema Specification
+
+The complete PostgreSQL migration script is available at [supabase-schema.sql](file:///c:/Users/shiva/Desktop/Shivan/Coal%20Mine/backend/supabase-schema.sql).
+
+### Tables Overview
+
+1. **`workers` Table**
+   - Tracks underground miner personnel, assigned zones, medical blood groups, emergency contacts, active shift timers, and real-time PPE compliance states.
+   - **Key Fields**: `worker_id` (TEXT UNIQUE), `name`, `role`, `zone`, `blood_group`, `emergency_contact`, `shift_start_timestamp`, `max_shift_minutes`, `photo_url`, `active_underground`, `last_scanned`, `ppe_compliance` (JSONB).
+
+2. **`incidents` Table**
+   - Manages DGMS statutory violation logs, methane spikes, emergency evacuation triggers, and supervisor sign-offs.
+   - **Key Fields**: `incident_id` (TEXT UNIQUE), `title`, `description`, `severity` (NOMINAL/WARNING/CRITICAL), `zone`, `timestamp`, `acknowledged` (BOOLEAN), `regulatory_clause`, `category`, `mitigation_step`, `supervisor_signature` (JSONB).
+
+3. **`telemetry` Table**
+   - High-frequency time-series environmental logs (CH4 methane, CO carbon monoxide, temperature, humidity, atmospheric pressure, O2 oxygen levels, air velocity, AQI, and ATEX rating).
+   - **Key Fields**: `node_id`, `zone`, `depth_meters`, `methane_ch4`, `carbon_monoxide_co`, `temperature`, `humidity`, `pressure`, `oxygen_o2`, `air_velocity_ms`, `air_quality_index`, `atex_zone`, `section_power_state`, `ventilation_fan_state`, `status`, `timestamp`.
+
+4. **`scan_logs` Table**
+   - AI computer vision turnstile entry logs, individual gear checks (helmet, jacket, mask, boots, gloves), confidence score, verdict, and physical barrier state (LOCKED/UNLOCKED).
+   - **Key Fields**: `worker_id`, `name`, `zone`, `confidence`, `helmet`, `safety_jacket`, `respirator_mask`, `steel_boots`, `gloves`, `verdict`, `missing_items` (JSONB), `turnstile_state`, `timestamp`.
+
+---
+
+## 4. API Endpoints & Interfaces
+
+### REST Endpoints Base: `http://localhost:8080/api/v1`
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/health` | Service uptime and healthcheck probe |
+| `GET` | `/workers` or `/workers/roster` | Fetch all underground active workers (filterable by zone) |
+| `POST` | `/workers` | Enroll new miner in database |
+| `POST` | `/workers/scan` | AI computer vision PPE scan evaluation & turnstile barrier control |
+| `GET` | `/incidents` | Fetch active/historical incidents (filterable by `acknowledged`) |
+| `POST` | `/incidents` | Dispatch manual safety alert & broadcast over WebSocket |
+| `POST` / `PATCH` | `/incidents/:id/acknowledge` | Acknowledge safety warning |
+| `POST` | `/incidents/:id/signoff` | Statutory supervisor sign-off with badge signature |
+| `GET` | `/telemetry/live` | Live telemetry snapshot across all 5 mine zones |
+| `GET` | `/telemetry/historical` | Time-series query with 1h/24h/7d/30d rollups |
+| `POST` | `/simulation/scenario` | Inject environmental anomalies (e.g. `GAS_LEAK_ZONE_B`, `PPE_NON_COMPLIANCE`, `EMERGENCY_EVACUATION`) |
+| `GET` | `/turnstile/status` | Read hardware turnstile barrier GPIO status |
+| `POST` | `/turnstile/override` | Manual supervisor turnstile barrier override |
+
+### Real-Time WebSocket Channel
+- **URL**: `ws://localhost:8080/api/v1/mine-safety/stream`
+- **Envelope Types**:
+  - `HEARTBEAT` (Handshake & latency monitoring)
+  - `TELEMETRY_PACKET` (Broadcast every 1.2s across mine zones)
+  - `WORKER_PPE_INFERENCE` (Edge AI camera scan events)
+  - `INCIDENT_ALERT` (Emergency alarms & safety alerts)
+
+---
+
+## 5. Verification & Testing Log
+
+| Test Case | Method | Expected Output | Result |
+|---|---|---|---|
+| **TypeScript Compilation** | `npm run build` | Zero compilation errors (`dist/server.js` emitted) | ✅ **PASSED** |
+| **Frontend Compilation** | `npm run build` (Vite) | Clean build, modules bundled successfully | ✅ **PASSED** |
+| **Backend Health Probe** | `GET /api/v1/health` | `status: HEALTHY`, `uptimeSeconds > 0` | ✅ **PASSED** |
+| **Database Seeding** | `npm run seed` | Seed miners & initial incidents into database | ✅ **PASSED** |
+| **AI Vision Turnstile Logic** | `POST /api/v1/workers/scan` | Missing gear $\rightarrow$ `LOCKED`; Full gear $\rightarrow$ `UNLOCKED` | ✅ **PASSED** |
+| **Incident Sign-off Lifecycle** | `POST /incidents/:id/signoff` | Updates timestamp, acknowledged flag, and supervisor signature | ✅ **PASSED** |
+| **WebSocket Stream Bridge** | `ws://localhost:8080/...` | Successfully received `HEARTBEAT` & `TELEMETRY_PACKET` | ✅ **PASSED** |
+| **Simulation Trigger** | `POST /simulation/scenario` | Scenario `GAS_LEAK_ZONE_B` broadcasted to all connected clients | ✅ **PASSED** |
+
+---
+
+## 6. How to Connect Your Remote Supabase Project
+
+1. Log in to [Supabase Console](https://supabase.com/dashboard).
+2. Create a new project or select an existing one.
+3. Open **SQL Editor**, paste and execute [supabase-schema.sql](file:///c:/Users/shiva/Desktop/Shivan/Coal%20Mine/backend/supabase-schema.sql).
+4. In **Project Settings** $\rightarrow$ **API**, copy your **Project URL** and **API Key**.
+5. Update `backend/.env`:
+   ```env
+   SUPABASE_URL=https://your-project-id.supabase.co
+   SUPABASE_KEY=your-supabase-service-role-or-anon-key
+   ```
+6. Run the database seed script:
+   ```bash
+   npm run seed
+   ```

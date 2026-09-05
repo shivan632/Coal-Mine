@@ -1,0 +1,40 @@
+{
+  "name": "coalguard-backend",
+  "version": "1.0.0",
+  "description": "COALGUARD AI Underground Coal Mine Safety Command Center — Backend Server (Node.js, Express, TypeScript, Supabase, WebSockets)",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "seed": "tsx src/seeds/seedDatabase.ts",
+    "render-build": "npm install && npm run build"
+  },
+  "keywords": [
+    "coal-mine-safety",
+    "iot-telemetry",
+    "dgms-compliance",
+    "ai-ppe-detection",
+    "supabase",
+    "postgresql",
+    "websockets",
+    "render"
+  ],
+  "author": "CoalGuard AI Team",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.115.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.7",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

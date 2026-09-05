@@ -1,0 +1,23 @@
+services:
+  # Backend Web Service (Node.js + WebSockets + Supabase)
+  - type: web
+    name: coalguard-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: SUPABASE_URL
+        sync: false # Set in Render Dashboard -> Environment
+      - key: SUPABASE_KEY
+        sync: false # Set in Render Dashboard -> Environment
+      - key: CORS_ORIGIN
+        sync: false # Set to your frontend Render URL
+      - key: TELEMETRY_INTERVAL_MS
+        value: 1200

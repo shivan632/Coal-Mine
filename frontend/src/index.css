@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-orbitron: 'Orbitron', sans-serif;
+    --font-chakra: 'Chakra Petch', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Inter', sans-serif;
+
+    /* Theme Palette */
+    --color-void: #030812;
+    --color-primary-bg: #06111F;
+    --color-surface-bg: #0A1A2E;
+    --color-card-bg: rgba(16, 34, 53, 0.75);
+    
+    --neon-cyan: #00D4FF;
+    --neon-blue: #2F80ED;
+    --neon-purple: #8B5CF6;
+    --neon-green: #22C55E;
+    --neon-amber: #F59E0B;
+    --neon-crimson: #FF4D5A;
+  }
+
+  body {
+    background-color: var(--color-void);
+    color: #f1f5f9;
+    font-family: var(--font-sans);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, .font-hud {
+    font-family: var(--font-orbitron);
+  }
+
+  .font-tech {
+    font-family: var(--font-chakra);
+  }
+
+  .font-mono-val {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Custom Cyber Glassmorphism & Glow Effects */
+.glass-panel {
+  background: rgba(10, 26, 46, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 16px rgba(0, 212, 255, 0.03);
+}
+
+.glass-panel-interactive {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-interactive:hover {
+  border-color: rgba(0, 212, 255, 0.45);
+  box-shadow: 0 12px 40px -8px rgba(0, 212, 255, 0.2), inset 0 0 24px rgba(0, 212, 255, 0.08);
+}
+
+.glass-panel-danger {
+  border-color: rgba(255, 77, 90, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(255, 77, 90, 0.2), inset 0 0 16px rgba(255, 77, 90, 0.05);
+}
+
+.glass-panel-warning {
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(245, 158, 11, 0.2), inset 0 0 16px rgba(245, 158, 11, 0.05);
+}
+
+.glass-panel-safe {
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(34, 197, 94, 0.2), inset 0 0 16px rgba(34, 197, 94, 0.05);
+}
+
+/* 3D Flip Card Styles */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Cyber Scanning Line Animation */
+@keyframes cyberScan {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0.8;
+  }
+}
+
+.animate-scanline {
+  animation: cyberScan 2.5s ease-in-out infinite;
+}
+
+/* Holographic Grid Background */
+.cyber-grid-bg {
+  background-image: 
+    linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.cyber-radial-overlay {
+  background: radial-gradient(circle at 50% 30%, rgba(47, 128, 237, 0.12) 0%, rgba(6, 17, 31, 0.9) 70%, #030812 100%);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(6, 17, 31, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.6);
+}
+
+/* Pulse Glows */
+@keyframes neonPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.7);
+  }
+}
+
+.animate-neon-pulse {
+  animation: neonPulse 2s infinite ease-in-out;
+}
+
+@keyframes dangerPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 77, 90, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(255, 77, 90, 0.8);
+  }
+}
+
+.animate-danger-pulse {
+  animation: dangerPulse 1.2s infinite ease-in-out;
+}
