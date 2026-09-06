@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { AlertOctagon, Volume2, VolumeX, Trash2, CheckCircle2, ShieldAlert, FileSignature, History } from 'lucide-react';
+import { AlertOctagon, Volume2, VolumeX, Trash2, CheckCircle2, ShieldAlert, FileSignature, History, Zap } from 'lucide-react';
 import { useAlertStore } from '../../stores/useAlertStore';
 import { useTelemetryStore } from '../../stores/useTelemetryStore';
+import { useAiCopilotStore } from '../../stores/useAiCopilotStore';
 import { soundEffects } from '../../services/soundEffects';
 import { IncidentAlert } from '../../types/dashboard';
 import { IncidentSignoffModal } from '../modals/IncidentSignoffModal';
@@ -13,6 +14,7 @@ export const IncidentDispatcher: React.FC = () => {
   const acknowledgeAlert = useAlertStore((state) => state.acknowledgeAlert);
   const clearDismissed = useAlertStore((state) => state.clearDismissed);
   const openReplayModal = useTelemetryStore((state) => state.openReplayModal);
+  const openIncidentAssessment = useAiCopilotStore((state) => state.openIncidentAssessment);
 
   const [selectedAlertForSignoff, setSelectedAlertForSignoff] = useState<IncidentAlert | null>(null);
 
@@ -117,6 +119,16 @@ export const IncidentDispatcher: React.FC = () => {
                     <span className="text-[9px] text-cyan-300">ACTION: {alert.mitigationStep}</span>
 
                     <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => openIncidentAssessment(alert)}
+                        title="AI Root Cause & Statutory Threat Assessment (OpenRouter)"
+                        className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#0c2743] hover:bg-cyan-900 text-cyan-300 border border-cyan-500/50 flex items-center gap-1 transition-all shadow-[0_0_8px_rgba(0,212,255,0.25)]"
+                      >
+                        <Zap className="w-3 h-3 text-amber-400" />
+                        <span>AI Assess</span>
+                      </button>
+
                       <button
                         type="button"
                         onClick={() => openReplayModal(alert.id)}

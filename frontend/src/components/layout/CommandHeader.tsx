@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Radio, Wifi, Clock, AlertTriangle, Users, FileText, Download, Database } from 'lucide-react';
+import { Shield, Radio, Wifi, Clock, AlertTriangle, Users, FileText, Download, Database, Bot } from 'lucide-react';
 import { useTelemetryStore } from '../../stores/useTelemetryStore';
 import { useWorkerSafetyStore } from '../../stores/useWorkerSafetyStore';
 import { useAlertStore } from '../../stores/useAlertStore';
+import { useAiCopilotStore } from '../../stores/useAiCopilotStore';
 import { generateStatutoryPDFReport } from '../../services/pdfReportGenerator';
 import { ShiftRosterModal } from '../modals/ShiftRosterModal';
 
@@ -20,6 +21,8 @@ export const CommandHeader: React.FC = () => {
 
   const workerQueue = useWorkerSafetyStore((state) => state.workerQueue);
   const alerts = useAlertStore((state) => state.alerts);
+  const openCopilot = useAiCopilotStore((state) => state.openCopilot);
+  const aiStatus = useAiCopilotStore((state) => state.aiStatus);
 
   useEffect(() => {
     const updateTime = () => {
@@ -86,6 +89,21 @@ export const CommandHeader: React.FC = () => {
 
           {/* Action Center: Shift Roster, Statutory PDF & Network Telemetry */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {/* Neural AI Advisor Button (OpenRouter) */}
+            <button
+              type="button"
+              onClick={() => openCopilot()}
+              className="px-3.5 py-1.5 rounded-lg border border-cyan-400/80 bg-gradient-to-r from-[#072442] via-[#0d2e53] to-[#1a123a] text-cyan-200 hover:text-white hover:border-cyan-300 transition-all text-xs font-mono font-bold flex items-center gap-2 shadow-[0_0_18px_rgba(0,212,255,0.4)] group relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-transparent group-hover:opacity-100 transition-opacity" />
+              <Bot className="w-4 h-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
+              <span className="tracking-wide">NEURAL AI ADVISOR</span>
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+              </span>
+            </button>
+
             {/* Shift Roster Button */}
             <button
               type="button"

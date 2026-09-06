@@ -6,6 +6,7 @@ import simulationRoutes from './simulationRoutes.js';
 import turnstileRoutes from './turnstileRoutes.js';
 
 import controlRoutes from './controlRoutes.js';
+import aiRouter from './aiRoutes.js';
 
 const apiRouter = Router();
 
@@ -25,5 +26,6 @@ apiRouter.use('/incidents', incidentRoutes);
 apiRouter.use('/simulation', simulationRoutes);
 apiRouter.use('/turnstile', turnstileRoutes);
 apiRouter.use('/control', controlRoutes);
+apiRouter.use('/ai', aiRouter);
 
 export default apiRouter;

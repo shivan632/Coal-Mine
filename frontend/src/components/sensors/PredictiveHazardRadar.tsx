@@ -9,8 +9,10 @@ import {
   Flame,
   Wind,
   CheckCircle,
+  Bot,
 } from 'lucide-react';
 import { useTelemetryStore } from '../../stores/useTelemetryStore';
+import { useAiCopilotStore } from '../../stores/useAiCopilotStore';
 import { MineZoneId } from '../../types/dashboard';
 
 export const PredictiveHazardRadar: React.FC = () => {
@@ -18,6 +20,7 @@ export const PredictiveHazardRadar: React.FC = () => {
   const setActiveZone = useTelemetryStore((state) => state.setActiveZone);
   const predictiveMetrics = useTelemetryStore((state) => state.predictiveMetrics);
   const zonePackets = useTelemetryStore((state) => state.zonePackets);
+  const openCopilot = useAiCopilotStore((state) => state.openCopilot);
 
   const zones: MineZoneId[] = [
     'Shaft-01',
@@ -99,6 +102,20 @@ export const PredictiveHazardRadar: React.FC = () => {
           <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-950/50 px-1.5 py-0.5 rounded border border-cyan-500/30">
             {currentMetric.confidenceScore}% CONF
           </span>
+
+          <button
+            type="button"
+            onClick={() =>
+              openCopilot(
+                `Atmospheric Hazard Predictive Audit for ${activeZone}: Live CH4 is ${currentPacket?.methane_CH4 ?? 0.45}%, d(CH4)/dt is ${currentMetric.ch4VelocityPercentPerMin}%/min, projected +10m is ${currentMetric.projectedCh4_10m}%, projected +30m is ${currentMetric.projectedCh4_30m}%, and TTB is ${currentMetric.timeToBreachSeconds !== null ? Math.round(currentMetric.timeToBreachSeconds / 60) + 'm' : 'STABLE'}. What immediate ventilation adjustments or interlocks are required under CMR 2017?`
+              )
+            }
+            title="Ask OpenRouter AI to analyze predictive gas velocity"
+            className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#09223a] hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/40 flex items-center gap-1 transition-all shadow-sm"
+          >
+            <Bot className="w-3 h-3 text-cyan-400" />
+            <span>AI Audit</span>
+          </button>
         </div>
       </div>
 

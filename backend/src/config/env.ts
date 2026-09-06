@@ -15,6 +15,7 @@ export const ENV = {
   CORS_ORIGIN: process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map((s) => s.trim())
     : ['http://localhost:5173', 'http://localhost:3000'],
+  OPENROUTER: process.env.OPENROUTER_API_KEY || process.env.OPENROUTER || '',
   TELEMETRY_INTERVAL_MS: parseInt(process.env.TELEMETRY_INTERVAL_MS || '1200', 10),
   MQTT_BROKER_URL: process.env.MQTT_BROKER_URL || '',
 };

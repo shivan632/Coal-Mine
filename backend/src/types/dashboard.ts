@@ -202,3 +202,14 @@ export interface BackendStreamEnvelope {
   timestamp: number;
   payload: any;
 }
+
+// AI response from OpenRouter integration
+export interface AiResponse {
+  content: string;
+  model: string;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+}

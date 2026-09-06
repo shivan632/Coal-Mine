@@ -84,8 +84,8 @@ export type { BackendStreamEnvelope };
 
 export const API_CONFIG = {
   // Set to your backend WebSocket URL
-  WS_URL: import.meta.env.VITE_WS_URL || 'ws://localhost:8080/api/v1/mine-safety/stream',
-  REST_BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1',
+  WS_URL: import.meta.env.VITE_WS_URL || 'ws://localhost:8081/api/v1/mine-safety/stream',
+  REST_BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:8081/api/v1',
   RECONNECT_INTERVAL_MS: 3000,
   MAX_RETRIES: 5,
 };

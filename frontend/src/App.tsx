@@ -13,11 +13,13 @@ import { IncidentDispatcher } from './components/sensors/IncidentDispatcher';
 import { PredictiveHazardRadar } from './components/sensors/PredictiveHazardRadar';
 import { AutomatedInterlockPanel } from './components/sensors/AutomatedInterlockPanel';
 import { IncidentReplayModal } from './components/modals/IncidentReplayModal';
+import { OpenRouterSafetyCopilotModal } from './components/modals/OpenRouterSafetyCopilotModal';
+import { IncidentAiAssessmentModal } from './components/modals/IncidentAiAssessmentModal';
 import { MultiAxisTelemetryHistory } from './components/bottom-panel/MultiAxisTelemetryHistory';
 import { ScenarioSimulationDeck } from './components/bottom-panel/ScenarioSimulationDeck';
 import { useWorkerSafetyStore } from './stores/useWorkerSafetyStore';
 import { telemetryStream } from './services/telemetryStream';
-import { Shield, Code, Wifi } from 'lucide-react';
+import { Shield, Code, Wifi, Zap } from 'lucide-react';
 
 export const App: React.FC = () => {
   const currentWorker = useWorkerSafetyStore((state) => state.currentWorker);
@@ -89,12 +91,12 @@ export const App: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#091B2E] border border-cyan-500/30 text-cyan-300 text-[11px]">
-              <Wifi className="w-3 h-3 text-emerald-400 animate-pulse" />
-              <span>BACKEND WS / REST STREAM READY</span>
+              <Zap className="w-3 h-3 text-amber-400 animate-pulse" />
+              <span>OPENROUTER AI ENGINE ACTIVE</span>
             </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#091B2E] border border-purple-500/30 text-purple-300 text-[11px]">
-              <Code className="w-3 h-3 text-purple-400" />
-              <span>CONTRACT: `src/services/apiContract.ts`</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#091B2E] border border-emerald-500/30 text-emerald-300 text-[11px]">
+              <Wifi className="w-3 h-3 text-emerald-400 animate-pulse" />
+              <span>LIVE WS STREAM :8081</span>
             </div>
           </div>
         </footer>
@@ -102,6 +104,12 @@ export const App: React.FC = () => {
 
       {/* Chronological Incident Flight Recorder Replay Modal */}
       <IncidentReplayModal />
+
+      {/* OpenRouter Mission-Critical Neural Safety Advisor Modal */}
+      <OpenRouterSafetyCopilotModal />
+
+      {/* Structured AI Incident Threat Assessment Modal */}
+      <IncidentAiAssessmentModal />
     </div>
   );
 };
