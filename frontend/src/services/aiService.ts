@@ -47,6 +47,7 @@ export interface StreamChatOptions {
 
 const DIRECT_OPENROUTER_KEY = (import.meta as any).env?.VITE_OPENROUTER_API_KEY || '';
 
+
 class AiService {
   private getBaseUrl(): string {
     return API_CONFIG.REST_BASE_URL || 'http://localhost:8081/api/v1';
